@@ -50,7 +50,6 @@
         .badge-unity    { background: #1b2333; color: #58a6ff; border-color: #1f3a5f; }
         .badge-scratch  { background: #2e1c33; color: #f778ba; border-color: #5a2d5a; }
         .badge-physx    { background: #1e2e1a; color: #3fb950; border-color: #2d4a2d; }
-        .badge-github   { background: #1c1c1c; color: #e6edf3; border-color: #444; }
 
         /* ── Sections ───────────────────────── */
         section { padding: 56px 0; border-bottom: 1px solid var(--border); }
@@ -84,18 +83,18 @@
         td:first-child { font-weight: 600; color: #fff; white-space: nowrap; font-family: ui-monospace, 'Cascadia Code', monospace; font-size: 0.84rem; }
         td:nth-child(2) { color: var(--text-dim); }
 
-        /* ── Block category chips ───────────── */
-        .cat-chips { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
-        .cat-chip {
-            padding: 6px 16px; border-radius: 6px; font-size: 0.85rem; font-weight: 600;
-            border: 1px solid;
+        /* ── Rule flow ──────────────────────── */
+        .rule-flow {
+            display: flex; flex-wrap: wrap; gap: 14px; margin: 20px 0;
+            justify-content: center;
         }
-        .chip-action    { background: #1b2333; color: #58a6ff; border-color: #1f3a5f; }
-        .chip-control   { background: #2e1c33; color: #f778ba; border-color: #5a2d5a; }
-        .chip-condition { background: #1e3322; color: #3fb950; border-color: #2d5a2d; }
-        .chip-value     { background: #33291a; color: #f0883e; border-color: #5a4028; }
-        .chip-event     { background: #2a1e33; color: #9a78ee; border-color: #4a3278; }
-        .chip-special   { background: #331a1a; color: #f85149; border-color: #5a2828; }
+        .rule-step {
+            background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+            padding: 18px 22px; max-width: 260px; text-align: center;
+        }
+        .rule-step .step-num { font-size: 1.8rem; font-weight: 800; color: var(--accent); display: block; }
+        .rule-step .step-title { font-weight: 600; color: #fff; margin: 6px 0; }
+        .rule-step .step-desc { font-size: 0.85rem; color: var(--text-dim); }
 
         /* ── Tips ───────────────────────────── */
         .tip {
@@ -123,6 +122,24 @@
         .arena-enemy  { position: absolute; width: 14px; height: 14px; background: #f85149; border-radius: 2px; bottom: 30px; right: 26px; }
         .arena-wall   { position: absolute; width: 40px; height: 100px; background: #484f58; left: 50%; top: 50%; transform: translate(-50%, -50%); border-radius: 2px; }
         .arena-label  { font-size: 0.7rem; color: var(--text-dim); }
+
+        /* ── Win condition cards ────────────── */
+        .win-card {
+            background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+            padding: 22px; margin-bottom: 14px;
+        }
+        .win-card h4 { color: #fff; margin-bottom: 6px; }
+        .win-card .verdict { font-weight: 700; font-size: 0.85rem; margin-bottom: 4px; }
+        .verdict-win   { color: var(--green); }
+        .verdict-draw  { color: var(--yellow); }
+        .verdict-lose  { color: var(--red); }
+        .win-card p { font-size: 0.9rem; color: var(--text-dim); margin: 0; }
+
+        /* ── Accessory detail ───────────────── */
+        .acc-row { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 14px; }
+        .acc-icon { font-size: 1.6rem; min-width: 40px; text-align: center; }
+        .acc-body h4 { font-size: 0.95rem; font-weight: 600; color: #fff; margin: 0 0 2px; }
+        .acc-body p { font-size: 0.87rem; color: var(--text-dim); margin: 0; }
     </style>
 </head>
 <body>
@@ -159,8 +176,8 @@
                 <h4>Visual Block Programming</h4>
                 <p>
                     Drag-and-drop Scratch-style blocks from a palette into a workspace. Blocks snap together
-                    vertically and nest inside control structures. Supports variables, custom voids, event triggers,
-                    and full JSON import/export — you can even hand-author strategies as JSON files.
+                    vertically and nest inside control structures. Supports variables, custom subroutines,
+                    event-triggered behaviors, and full JSON import/export.
                 </p>
             </div>
 
@@ -168,9 +185,9 @@
                 <span class="icon">🔧</span>
                 <h4>Accessory Loadout System</h4>
                 <p>
-                    Equip wheels, weapons, armor, sensors, and special modules. Each accessory consumes power,
-                    modifies stats (speed, damage, sensor range, etc.), can unlock exclusive blocks, and may
-                    grant special abilities like <strong>Bouncer</strong> (radial knockback) and <strong>Freezer</strong> (enemy slowdown).
+                    Equip mobility parts, weapons, armor, sensors, and special modules. Each accessory
+                    consumes power from a limited budget, modifies robot stats, can unlock exclusive blocks,
+                    and may grant active abilities like radial knockback or enemy slowdown.
                 </p>
             </div>
 
@@ -178,9 +195,9 @@
                 <span class="icon">⚙️</span>
                 <h4>Deterministic Simulation</h4>
                 <p>
-                    Matches run on a fixed 60 Hz tick clock with a custom physics world. This means results are
-                    reproducible — same program, same outcome every time. Includes projectile ricochet,
-                    knockback, health/damage, and robot-falling-off-map detection.
+                    Matches run on a fixed tick clock with a custom physics world. Every run with the same
+                    programs produces the same outcome. Supports projectile ricochet, knockback,
+                    fall-off-map detection, and capture zone scoring.
                 </p>
             </div>
 
@@ -188,12 +205,122 @@
                 <span class="icon">📡</span>
                 <h4>Sensor &amp; Event System</h4>
                 <p>
-                    Robots can sense front clearance, map edges, enemy distance/direction/health/speed,
-                    bullet detection, and wall/enemy contact. Event blocks scan conditions every 0.1s
-                    and can interrupt normal execution via priority queues — enabling reactive behaviors.
+                    Robots can sense the environment around them — obstacles ahead, map edges, enemy proximity,
+                    incoming projectiles, and contact with walls or opponents. Event blocks constantly monitor
+                    conditions and can interrupt normal execution when triggered.
                 </p>
             </div>
         </div>
+    </div>
+</section>
+
+<!-- ══════════════════════════════════════════ -->
+<!--  MATCH RULES & WIN CONDITIONS             -->
+<!-- ══════════════════════════════════════════ -->
+<section>
+    <div class="container">
+        <h2>Match Rules &amp; Win Conditions</h2>
+        <p class="section-desc">
+            Every round follows a strict simulation loop with multiple ways to win or lose. Understanding
+            these rules is essential for building effective strategies.
+        </p>
+
+        <h3>Round Lifecycle</h3>
+        <div class="rule-flow">
+            <div class="rule-step">
+                <span class="step-num">1</span>
+                <div class="step-title">Loadout Validation</div>
+                <div class="step-desc">The game checks that required accessories are equipped and the power budget is not exceeded before allowing the round to start.</div>
+            </div>
+            <div class="rule-step">
+                <span class="step-num">2</span>
+                <div class="step-title">World Bake</div>
+                <div class="step-desc">Scene geometry — ground, walls, obstacles — is converted into a simplified collision world for deterministic simulation. Both robots are placed at their start positions with full health.</div>
+            </div>
+            <div class="rule-step">
+                <span class="step-num">3</span>
+                <div class="step-title">Active Round</div>
+                <div class="step-desc">The tick clock starts. Player and enemy programs execute concurrently. Projectiles fly, sensors poll, events fire, health bars drain. The round continues until a terminal condition is met.</div>
+            </div>
+            <div class="rule-step">
+                <span class="step-num">4</span>
+                <div class="step-title">Resolution</div>
+                <div class="step-desc">When the round ends, a winner is determined by the rules below. A 2-second death/draw presentation plays, then the result popup is shown.</div>
+            </div>
+        </div>
+
+        <h3>How to Win (or Lose)</h3>
+
+        <div class="win-card">
+            <div class="verdict verdict-win">WIN — Deplete the Enemy</div>
+            <p>
+                Each robot has a health pool. Bullet hits deal damage. When the enemy's health reaches zero,
+                you win immediately. Accessories can modify both max health and damage per hit,
+                so loadout choices directly affect time-to-kill.
+            </p>
+        </div>
+
+        <div class="win-card">
+            <div class="verdict verdict-win">WIN — Knock the Enemy Off the Map</div>
+            <p>
+                The arena is a raised platform. If a robot falls below a threshold distance from the
+                platform surface, it is instantly eliminated regardless of remaining health. Knockback
+                from projectiles, ricochets, and special abilities can push robots over the edge.
+            </p>
+        </div>
+
+        <div class="win-card">
+            <div class="verdict verdict-win">WIN — Capture Zone Control</div>
+            <p>
+                Some arena layouts include a capture point near the center. If a robot controls
+                the zone when time expires, it wins — even if both robots are still alive.
+                The capture zone can change hands during the round depending on robot presence.
+            </p>
+        </div>
+
+        <div class="win-card">
+            <div class="verdict verdict-lose">LOSE — Your Robot is Depleted</div>
+            <p>
+                The mirror of the above: if your health hits zero (from bullets or falling),
+                the enemy wins. Damage from your own ricocheting bullets can hurt you too.
+            </p>
+        </div>
+
+        <div class="win-card">
+            <div class="verdict verdict-draw">DRAW — Mutual Destruction</div>
+            <p>
+                If both robots are depleted in the same tick (e.g., simultaneous knockback off the map,
+                or a final exchange of fire), the round ends in a draw. No winner is declared.
+            </p>
+        </div>
+
+        <h3>What Happens When Time Runs Out?</h3>
+        <p style="color: var(--text-dim);">
+            Each round has a configurable time limit (default 30 seconds, adjustable via the timer button).
+            When the clock expires without a knockout:
+        </p>
+        <ul style="margin-left:20px; color: var(--text-dim); font-size:0.9rem; margin-bottom:16px;">
+            <li>If one robot controls the capture zone, they win outright.</li>
+            <li>Otherwise, the robot that took <strong>less total damage</strong> during the round wins — this is a "judge's decision" based on combat effectiveness.</li>
+            <li>If damage taken is equal, the round is a draw.</li>
+        </ul>
+
+        <h3>Program Completion</h3>
+        <p style="color: var(--text-dim);">
+            Both player and enemy programs run simultaneously. If <strong>both</strong> programs finish executing
+            their main chain (i.e., reach the end of their block sequence without being in a loop)
+            before the timer expires and before either robot is destroyed, the round stops
+            and the winner is resolved by the same damage-comparison rule used for timeouts.
+        </p>
+
+        <h3>Damage Mechanics</h3>
+        <p style="color: var(--text-dim);">
+            Bullets deal a fixed base damage per hit. Each robot's damage output can be modified by
+            weapon accessories (via a damage multiplier stat). Bullets ricochet off walls — a single
+            shot can potentially hit multiple times. Each ricochet reduces remaining bullet lifetime,
+            so infinite bounces are not possible. Damage is disabled before the round starts and
+            after it ends, so there's no pre-match or post-match griefing.
+        </p>
     </div>
 </section>
 
@@ -224,7 +351,7 @@
             <thead><tr><th>Tab</th><th>Function</th></tr></thead>
             <tbody>
                 <tr><td>PROGRAMMING</td><td>The main view: category list → palette → workspace → 3D arena. This is where you build the robot program.</td></tr>
-                <tr><td>ACCESSORIES</td><td>Switches to the loadout editor: select wheels, weapons, armor, sensors, and specials. Shows a 3D preview of equipped parts and lists unlocked blocks.</td></tr>
+                <tr><td>ACCESSORIES</td><td>Switches to the loadout editor: select mobility, weapon, armor, sensor, and special modules. Shows a 3D preview of equipped parts and lists unlocked blocks.</td></tr>
             </tbody>
         </table>
 
@@ -233,110 +360,137 @@
             <thead><tr><th>Button</th><th>Function</th></tr></thead>
             <tbody>
                 <tr><td>IM/EXPORT</td><td>Opens a popup with three actions: <strong>export</strong> your program as JSON, <strong>import for my robot</strong> a JSON strategy, or <strong>import for enemy</strong> a JSON strategy.</td></tr>
-                <tr><td>30s</td><td>Sets the round duration. Click to open a dialog where you can change the time limit (seconds).</td></tr>
+                <tr><td>30s</td><td>Sets the round duration. Click to open a dialog where you can change the time limit.</td></tr>
                 <tr><td>P: 0/50</td><td>Power budget display. Shows current power consumption vs. the player limit. If you exceed the limit, the Run button is blocked.</td></tr>
                 <tr><td>?</td><td>Quick Template — loads a pre-built example program into the workspace (clears existing blocks). Useful as a starting point.</td></tr>
-                <tr><td>1x</td><td>Simulation speed toggle. Cycles through speed multipliers (1×, 2×, 4×, etc.) during a running match.</td></tr>
-            </tbody>
-        </table>
-
-        <h3>Custom Voids Toolbar</h3>
-        <table>
-            <thead><tr><th>Control</th><th>Function</th></tr></thead>
-            <tbody>
-                <tr><td>New void text field</td><td>Enter a name for a reusable subroutine. Build the body after Robot Start in the workspace, then save.</td></tr>
-                <tr><td>Save void</td><td>Saves the current workspace chain (starting from Robot Start) as a named custom void. The void can then be called from the palette.</td></tr>
+                <tr><td>1x</td><td>Simulation speed toggle. Cycles through speed multipliers during a running match.</td></tr>
             </tbody>
         </table>
     </div>
 </section>
 
 <!-- ══════════════════════════════════════════ -->
-<!--  BLOCK CATEGORIES                         -->
-<!-- ══════════════════════════════════════════ -->
-<section>
-    <div class="container">
-        <h2>Block Categories</h2>
-        <p class="section-desc">
-            Blocks are organized into categories in the palette. Select a category on the left to see its blocks.
-            44 block types are available, covering movement, sensing, logic, math, events, variables, and special accessories.
-        </p>
-
-        <div class="cat-chips">
-            <span class="cat-chip chip-action">ACTION</span>
-            <span class="cat-chip chip-control">CONTROL</span>
-            <span class="cat-chip chip-condition">SENSING</span>
-            <span class="cat-chip chip-value">OPERATORS</span>
-            <span class="cat-chip chip-event">EVENTS</span>
-            <span class="cat-chip chip-special">SPECIAL</span>
-        </div>
-
-        <h3>What each category covers</h3>
-        <div class="grid" style="margin-top:16px;">
-            <div class="card">
-                <h4>ACTION</h4>
-                <p>Move, Rotate, Wait, Fire, AimAtEnemy, PointTowards, and WaitUntil — these directly control your robotʼs body and cannon.</p>
-            </div>
-            <div class="card">
-                <h4>CONTROL</h4>
-                <p>Repeat (forever), RepeatTimes, If, IfElse, and RepeatUntil — these structure program flow with loops and branching.</p>
-            </div>
-            <div class="card">
-                <h4>SENSING</h4>
-                <p>FrontClear, FrontIsMapEdge, EnemyInView, ContactWithEnemy, ContactWithWall, DetectBullet — these query the environment.</p>
-            </div>
-            <div class="card">
-                <h4>OPERATORS</h4>
-                <p>Math (Add, Subtract, Multiply, Divide), comparisons (&gt;, &lt;, =), logic (And, Or, Not), and value reporters like Distance, Health, Direction, and Speed.</p>
-            </div>
-            <div class="card">
-                <h4>VARIABLES &amp; VOIDS</h4>
-                <p>Create named variables with Set, Change, Show, and Hide; reporter blocks read their values. Custom Voids let you save reusable subroutines.</p>
-            </div>
-            <div class="card">
-                <h4>SPECIAL</h4>
-                <p>ActivateBouncer and ActivateFreezer — execute accessory-gated abilities that deal radial knockback or temporarily freeze the enemy.</p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- ══════════════════════════════════════════ -->
-<!--  ACCESSORY SYSTEM                         -->
+<!--  ACCESSORY SYSTEM (EXPANDED)              -->
 <!-- ══════════════════════════════════════════ -->
 <section>
     <div class="container">
         <h2>Accessory System</h2>
         <p class="section-desc">
-            Accessories change how your robot performs. Each one costs power — you have a limited budget,
-            so choose wisely. The ACCESSORIES tab lets you equip and preview parts.
+            Accessories are the customization backbone of your robot. Each one occupies a specific
+            equipment slot, consumes a portion of your power budget, and can dramatically alter
+            your robot's combat performance. The ACCESSORIES tab provides a visual preview
+            of equipped parts and shows which blocks each accessory unlocks.
         </p>
-        <div class="grid">
-            <div class="card">
-                <h4>🛞 Wheels</h4>
-                <p>Affect move and rotate speed via duration multipliers.</p>
-            </div>
-            <div class="card">
-                <h4>🔫 Weapons</h4>
-                <p>Modify muzzle velocity, fire rate, and damage multipliers.</p>
-            </div>
-            <div class="card">
-                <h4>🛡️ Armor</h4>
-                <p>Grant bonus health and sometimes sensor range boosts.</p>
-            </div>
-            <div class="card">
-                <h4>📡 Sensors</h4>
-                <p>Extend detection range for enemy visibility and distance queries.</p>
-            </div>
-            <div class="card">
-                <h4>⚡ Specials</h4>
-                <p>Unlock unique abilities: <strong>Bouncer</strong> (radial force push, configurable radius and target layer) and <strong>Freezer</strong> (temporary enemy speed debuff with cooldown).</p>
-            </div>
-            <div class="card">
-                <h4>🔓 Block Unlocks</h4>
-                <p>Some accessories unlock blocks that are otherwise hidden in the palette — you must equip the right part to access certain abilities.</p>
+
+        <h3>Equipment Slots &amp; Categories</h3>
+
+        <div class="acc-row">
+            <span class="acc-icon">🛞</span>
+            <div class="acc-body">
+                <h4>Mobility — Wheels &amp; Tracks</h4>
+                <p>
+                    Determines how fast your robot moves and turns. Different mobility options apply
+                    duration multipliers to movement and rotation actions. Faster mobility means you can
+                    cover more ground per action block, but high-performance parts cost more power.
+                    Mobility is a single-select slot — you can only equip one at a time.
+                </p>
             </div>
         </div>
+
+        <div class="acc-row">
+            <span class="acc-icon">🔫</span>
+            <div class="acc-body">
+                <h4>Weapon — Cannons &amp; Lasers</h4>
+                <p>
+                    Controls your offensive output. Weapons can modify muzzle velocity (how fast projectiles travel),
+                    fire rate (time between shots), and damage multiplier (how hard each hit lands).
+                    Some weapons also define a maximum effective range with damage falloff — shots
+                    beyond optimal distance deal reduced damage. Equipping a weapon also unlocks
+                    the Fire block in the programming palette.
+                </p>
+            </div>
+        </div>
+
+        <div class="acc-row">
+            <span class="acc-icon">🛡️</span>
+            <div class="acc-body">
+                <h4>Defense — Armor, Shields, Jetpacks</h4>
+                <p>
+                    Armor adds a flat bonus to your robot's maximum health pool and may provide
+                    secondary benefits like increased sensor range. Shields and jetpacks occupy this
+                    same single-select slot and provide different defensive or mobility trade-offs.
+                    The defense slot is crucial for survivability — a robot with no armor is fragile.
+                </p>
+            </div>
+        </div>
+
+        <div class="acc-row">
+            <span class="acc-icon">📡</span>
+            <div class="acc-body">
+                <h4>Sensor — Radar</h4>
+                <p>
+                    Extends the range at which your robot can detect enemies and obstacles.
+                    A longer sensor range means your robot can "see" threats from farther away,
+                    which is critical for environment-aware strategies that use visibility checks.
+                    Sensor range multiplies the base detection distance of all sensing blocks.
+                </p>
+            </div>
+        </div>
+
+        <div class="acc-row">
+            <span class="acc-icon">⚡</span>
+            <div class="acc-body">
+                <h4>Special — Bouncer &amp; Freezer</h4>
+                <p>
+                    Active abilities that can turn the tide of battle. These occupy the Special slot
+                    and each has its own cooldown timer.
+                </p>
+            </div>
+        </div>
+
+        <h3>Special Abilities in Detail</h3>
+
+        <div class="grid" style="margin-top:12px;">
+            <div class="card">
+                <span class="icon">💥</span>
+                <h4>Bouncer</h4>
+                <p>
+                    A radial knockback burst centered on your robot. When activated, it applies a
+                    physics impulse to targets within a configurable radius. Extremely effective for
+                    pushing enemies off the map edge or breaking line-of-sight. Has a cooldown between
+                    uses, and some Bouncer variants can only fire once per round.
+                </p>
+            </div>
+            <div class="card">
+                <span class="icon">❄️</span>
+                <h4>Freezer</h4>
+                <p>
+                    Temporarily multiplies the target enemy's movement and firing speed by a fraction,
+                    effectively slowing them down for a configurable duration. Must be activated within
+                    range of the enemy robot. The freeze effect wears off after its duration expires,
+                    but can be re-applied once the cooldown resets. Does not deal direct damage.
+                </p>
+            </div>
+        </div>
+
+        <h3>Power Budget</h3>
+        <p style="color: var(--text-dim);">
+            Every accessory has a power consumption value. Both you and the enemy have a power
+            ceiling — if your equipped loadout exceeds it, you cannot start the round.
+            This forces meaningful trade-offs: you can't equip the best of everything.
+            The current power usage is displayed next to the global controls and updates
+            in real time as you change equipment.
+        </p>
+
+        <h3>Stat Bonuses</h3>
+        <p style="color: var(--text-dim);">
+            Accessories modify your robot's performance through cumulative stat bonuses.
+            Multiple equipped parts can stack their effects. The key stats affected are:
+            movement speed, rotation speed, maximum health, damage dealt per hit,
+            projectile muzzle velocity, fire rate, and sensor detection range.
+            Some accessories also unlock blocks that would otherwise be hidden in the palette —
+            you literally cannot use certain abilities without the right equipment.
+        </p>
     </div>
 </section>
 
@@ -347,68 +501,31 @@
     <div class="container">
         <h2>Strategy &amp; Competition</h2>
         <p class="section-desc">
-            Programs are stored as JSON files — you can export your design, share it, or hand-write strategies
-            for AI/LLM competitions. Full documentation lives in <code>strategy/LLM_COMPETITION_GUIDE.md</code>.
+            Programs are stored and shared as JSON files. You can export your design, import
+            opponent strategies, or hand-author programs. A strategy competition guide is
+            included in the project repository.
         </p>
 
         <h3>Arena Layout</h3>
         <div class="arena-illustration">
             <div class="arena-box">
                 <div class="arena-player" title="Player start"></div>
-                <span class="arena-label" style="position:absolute;top:6px;left:40px;">My Robot (SW)</span>
+                <span class="arena-label" style="position:absolute;top:6px;left:40px;">My Robot</span>
                 <div class="arena-enemy" title="Enemy start"></div>
-                <span class="arena-label" style="position:absolute;bottom:6px;right:42px;">Enemy (NE)</span>
+                <span class="arena-label" style="position:absolute;bottom:6px;right:42px;">Enemy</span>
                 <div class="arena-wall" title="Center obstacles"></div>
-                <span class="arena-label" style="position:absolute;top:50%;left:58%;">Wall</span>
+                <span class="arena-label" style="position:absolute;top:50%;left:58%;">Walls</span>
             </div>
         </div>
         <p style="text-align:center; font-size:0.9rem; color:var(--text-dim);">
-            20×20 platform with center wall obstacles that block movement and line-of-sight.<br>
-            Start distance: ~20 units · Default move: 2 · Rotate: 90° · Health: 100 · Bullet damage: 5 per hit.
+            A square platform with obstacles near the center that block movement and line-of-sight.<br>
+            Robots start in opposite corners with significant distance between them.
         </p>
 
-        <h3>JSON Strategy Format</h3>
-        <p>A program is a flat JSON graph. Key rules:</p>
-        <ul style="margin-left: 20px; color: var(--text-dim); font-size: 0.9rem; margin-bottom: 16px;">
-            <li><code>startBlockId</code> points to the <strong>Start</strong> block</li>
-            <li><code>nextId</code> chains blocks vertically; <code>childSlots</code> attach control bodies and conditions</li>
-            <li>Block types are stored as <strong>numeric enum values</strong> (see strategy guide for the mapping)</li>
-            <li>Variables and custom voids are defined at the root level</li>
-            <li>Accessory loadout can be included when exporting</li>
-        </ul>
-
         <div class="tip">
-            <strong>Strategy tips:</strong> Use <code>EnemyInView</code> before firing — walls block line of sight.
-            Use <code>FrontClear</code> + <code>FrontIsMapEdge</code> before moving.
-            Variables are great for state-machine phases (routing → search → attack → recover).
-            Event blocks with priorities let you react instantly without polling in the main loop.
-        </div>
-    </div>
-</section>
-
-<!-- ══════════════════════════════════════════ -->
-<!--  GETTING STARTED                          -->
-<!-- ══════════════════════════════════════════ -->
-<section>
-    <div class="container">
-        <h2>Getting Started</h2>
-        <div class="grid">
-            <div class="card">
-                <h4>1. Open in Unity</h4>
-                <p>Open the project folder in Unity <strong>2022.3.62f3c1</strong> and load <code>Assets/Game.unity</code>.</p>
-            </div>
-            <div class="card">
-                <h4>2. Press Play</h4>
-                <p>Hit Play in the editor. The programming UI and 3D arena appear side-by-side.</p>
-            </div>
-            <div class="card">
-                <h4>3. Build a Program</h4>
-                <p>Drag blocks from the left palette into the workspace. Snap them together under <strong>Robot Start</strong>.</p>
-            </div>
-            <div class="card">
-                <h4>4. Run the Match</h4>
-                <p>Press <strong>&gt; Run</strong>. Watch your robot execute the program and fight the enemy in real time.</p>
-            </div>
+            <strong>Key design insight:</strong> The center obstacles mean direct pursuit often fails.
+            Successful strategies need to navigate around walls, check whether firing lanes are clear,
+            and use the environment to their advantage. Pure rush-down approaches are rarely optimal.
         </div>
     </div>
 </section>
@@ -419,7 +536,7 @@
         <p>
             Robot Arena &mdash; built with Unity · Deterministic Physics · Scratch-like Visual Programming
             &nbsp;·&nbsp;
-            <a href="https://github.com/NULL2020mc/RobotArena.github.io" target="_blank">GitHub</a>
+            <a href="https://github.com/NULL2020mc/NULL2020mc.github.io" target="_blank">GitHub</a>
         </p>
     </div>
 </footer>
