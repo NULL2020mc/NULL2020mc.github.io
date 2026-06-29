@@ -323,6 +323,20 @@
               It pairs well with chasing, capture-zone defense, and avoiding enemy rams.
             </p>
           </article>
+          <article class="info-card">
+            <span class="badge orange">RANGE</span>
+            <h3>Projectile range &amp; linear damage falloff</h3>
+            <p>
+              Every weapon defines a <strong>max range</strong> (meters) and a <strong>linear falloff</strong> curve.
+              Within the <strong>falloff start distance</strong>, bullets deal 100% base damage. Beyond that,
+              damage decreases <strong>linearly</strong> with distance traveled — the farther the shot, the less it hurts.
+              At <strong>max range</strong>, damage reaches a configurable <strong>minimum multiplier</strong>
+              (e.g., 20%). If <code>maxRange</code> is <strong>0</strong>, the weapon has <strong>no range limit</strong>
+              — bullets never expire from distance and always deal full damage. This system rewards closing the gap
+              and makes long-range sniping ineffective unless the weapon is built for it.
+              Check weapon stats in the Accessories tab to understand each weapon's effective engagement envelope.
+            </p>
+          </article>
         </div>
 
         <figure class="screenshot-frame wide-shot">
