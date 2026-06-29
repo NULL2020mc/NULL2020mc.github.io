@@ -1,557 +1,422 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Robot Arena — Visual Programming Battle Sandbox</title>
-    <style>
-        :root {
-            --bg: #0d1117;
-            --surface: #161b22;
-            --border: #30363d;
-            --text: #c9d1d9;
-            --text-dim: #8b949e;
-            --accent: #58a6ff;
-            --accent2: #f0883e;
-            --green: #3fb950;
-            --red: #f85149;
-            --purple: #9a78ee;
-            --yellow: #ffbe1c;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.6;
-        }
-
-        a { color: var(--accent); text-decoration: none; }
-        a:hover { text-decoration: underline; }
-
-        .container { max-width: 960px; margin: 0 auto; padding: 0 24px; }
-
-        /* ── Hero ────────────────────────────── */
-        .hero {
-            background: linear-gradient(135deg, #1a1c2e 0%, #161b22 50%, #1a1625 100%);
-            border-bottom: 1px solid var(--border);
-            padding: 80px 0 60px;
-            text-align: center;
-        }
-        .hero h1 { font-size: 3rem; font-weight: 800; letter-spacing: -0.5px; color: #fff; }
-        .hero .tagline { font-size: 1.25rem; color: var(--text-dim); margin-top: 12px; max-width: 600px; margin-left: auto; margin-right: auto; }
-        .hero .badge-row { margin-top: 24px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
-        .badge {
-            display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 0.8rem;
-            font-weight: 600; border: 1px solid var(--border); white-space: nowrap;
-        }
-        .badge-unity    { background: #1b2333; color: #58a6ff; border-color: #1f3a5f; }
-        .badge-scratch  { background: #2e1c33; color: #f778ba; border-color: #5a2d5a; }
-        .badge-physx    { background: #1e2e1a; color: #3fb950; border-color: #2d4a2d; }
-
-        /* ── Sections ───────────────────────── */
-        section { padding: 56px 0; border-bottom: 1px solid var(--border); }
-        section:last-of-type { border-bottom: none; }
-
-        h2 { font-size: 1.75rem; font-weight: 700; margin-bottom: 8px; color: #fff; }
-        .section-desc { color: var(--text-dim); margin-bottom: 28px; font-size: 0.95rem; }
-
-        h3 { font-size: 1.15rem; font-weight: 600; margin: 24px 0 8px; color: #e6edf3; }
-
-        p { margin-bottom: 12px; }
-
-        /* ── Cards grid ─────────────────────── */
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
-        .card {
-            background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
-            padding: 20px; transition: border-color 0.15s;
-        }
-        .card:hover { border-color: #484f58; }
-        .card h4 { font-size: 1rem; font-weight: 600; color: #fff; margin-bottom: 6px; }
-        .card p  { font-size: 0.9rem; color: var(--text-dim); margin: 0; }
-
-        .card .icon { font-size: 1.4rem; margin-bottom: 8px; display: block; }
-
-        /* ── Button reference table ─────────── */
-        table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
-        thead { background: var(--surface); }
-        th { text-align: left; padding: 10px 14px; font-weight: 600; color: #e6edf3; border-bottom: 1px solid var(--border); }
-        td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
-        tr:hover td { background: #1a1f29; }
-        td:first-child { font-weight: 600; color: #fff; white-space: nowrap; font-family: ui-monospace, 'Cascadia Code', monospace; font-size: 0.84rem; }
-        td:nth-child(2) { color: var(--text-dim); }
-
-        /* ── Rule flow ──────────────────────── */
-        .rule-flow {
-            display: flex; flex-wrap: wrap; gap: 14px; margin: 20px 0;
-            justify-content: center;
-        }
-        .rule-step {
-            background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
-            padding: 18px 22px; max-width: 260px; text-align: center;
-        }
-        .rule-step .step-num { font-size: 1.8rem; font-weight: 800; color: var(--accent); display: block; }
-        .rule-step .step-title { font-weight: 600; color: #fff; margin: 6px 0; }
-        .rule-step .step-desc { font-size: 0.85rem; color: var(--text-dim); }
-
-        /* ── Tips ───────────────────────────── */
-        .tip {
-            background: #1b2333; border-left: 3px solid var(--accent); border-radius: 0 6px 6px 0;
-            padding: 14px 18px; margin: 16px 0; font-size: 0.9rem;
-        }
-        .tip strong { color: var(--accent); }
-
-        /* ── Footer ─────────────────────────── */
-        footer {
-            text-align: center; padding: 32px 0; color: var(--text-dim); font-size: 0.85rem;
-            border-top: 1px solid var(--border);
-        }
-
-        /* ── Arena map mini ─────────────────── */
-        .arena-illustration {
-            background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
-            padding: 28px; text-align: center; margin: 16px 0;
-        }
-        .arena-box {
-            display: inline-block; width: 220px; height: 220px; background: #1a2a1a;
-            border: 2px solid #3fb95066; border-radius: 4px; position: relative;
-        }
-        .arena-player { position: absolute; width: 14px; height: 14px; background: #58a6ff; border-radius: 2px; top: 24px; left: 24px; }
-        .arena-enemy  { position: absolute; width: 14px; height: 14px; background: #f85149; border-radius: 2px; bottom: 30px; right: 26px; }
-        .arena-wall   { position: absolute; width: 40px; height: 100px; background: #484f58; left: 50%; top: 50%; transform: translate(-50%, -50%); border-radius: 2px; }
-        .arena-label  { font-size: 0.7rem; color: var(--text-dim); }
-
-        /* ── Win condition cards ────────────── */
-        .win-card {
-            background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
-            padding: 22px; margin-bottom: 14px;
-        }
-        .win-card h4 { color: #fff; margin-bottom: 6px; }
-        .win-card .verdict { font-weight: 700; font-size: 0.85rem; margin-bottom: 4px; }
-        .verdict-win   { color: var(--green); }
-        .verdict-draw  { color: var(--yellow); }
-        .verdict-lose  { color: var(--red); }
-        .win-card p { font-size: 0.9rem; color: var(--text-dim); margin: 0; }
-
-        /* ── Accessory detail ───────────────── */
-        .acc-row { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 14px; }
-        .acc-icon { font-size: 1.6rem; min-width: 40px; text-align: center; }
-        .acc-body h4 { font-size: 0.95rem; font-weight: 600; color: #fff; margin: 0 0 2px; }
-        .acc-body p { font-size: 0.87rem; color: var(--text-dim); margin: 0; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Robot Arena Guidance</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <header class="topbar">
+    <a class="brand" href="#overview">Robot Arena Guidance</a>
+    <nav class="nav" aria-label="Guide sections">
+      <a href="#overview">Overview</a>
+      <a href="#blocks">Block Programming</a>
+      <a href="#accessories">Accessories</a>
+      <a href="#capture">Capture Zone</a>
+      <a href="#win">Winning</a>
+    </nav>
+  </header>
 
-<!-- ══════════════════════════════════════════ -->
-<!--  HERO                                      -->
-<!-- ══════════════════════════════════════════ -->
-<header class="hero">
-    <div class="container">
-        <h1>Robot Arena</h1>
-        <p class="tagline">
-            A Unity-based battle sandbox where you program robot behavior with Scratch-like visual blocks,
-            tune loadouts, and watch your strategy fight in a deterministic physics arena.
-        </p>
-        <div class="badge-row">
-            <span class="badge badge-unity">Unity 2022.3 LTS</span>
-            <span class="badge badge-scratch">Visual Block Editor</span>
-            <span class="badge badge-physx">Deterministic Physics</span>
-        </div>
-    </div>
-</header>
-
-<!-- ══════════════════════════════════════════ -->
-<!--  KEY SYSTEMS                              -->
-<!-- ══════════════════════════════════════════ -->
-<section>
-    <div class="container">
-        <h2>Core Systems</h2>
-        <p class="section-desc">Robot Arena is built on four major pillars that work together to create the battle experience.</p>
-
-        <div class="grid">
-            <div class="card">
-                <span class="icon">🧩</span>
-                <h4>Visual Block Programming</h4>
-                <p>
-                    Drag-and-drop Scratch-style blocks from a palette into a workspace. Blocks snap together
-                    vertically and nest inside control structures. Supports variables, custom subroutines,
-                    event-triggered behaviors, and full JSON import/export.
-                </p>
-            </div>
-
-            <div class="card">
-                <span class="icon">🔧</span>
-                <h4>Accessory Loadout System</h4>
-                <p>
-                    Equip mobility parts, weapons, armor, sensors, and special modules. Each accessory
-                    consumes power from a limited budget, modifies robot stats, can unlock exclusive blocks,
-                    and may grant active abilities like radial knockback or enemy slowdown.
-                </p>
-            </div>
-
-            <div class="card">
-                <span class="icon">⚙️</span>
-                <h4>Deterministic Simulation</h4>
-                <p>
-                    Matches run on a fixed tick clock with a custom physics world. Every run with the same
-                    programs produces the same outcome. Supports projectile ricochet, knockback,
-                    fall-off-map detection, and capture zone scoring.
-                </p>
-            </div>
-
-            <div class="card">
-                <span class="icon">📡</span>
-                <h4>Sensor &amp; Event System</h4>
-                <p>
-                    Robots can sense the environment around them — obstacles ahead, map edges, enemy proximity,
-                    incoming projectiles, and contact with walls or opponents. Event blocks constantly monitor
-                    conditions and can interrupt normal execution when triggered.
-                </p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- ══════════════════════════════════════════ -->
-<!--  MATCH RULES & WIN CONDITIONS             -->
-<!-- ══════════════════════════════════════════ -->
-<section>
-    <div class="container">
-        <h2>Match Rules &amp; Win Conditions</h2>
-        <p class="section-desc">
-            Every round follows a strict simulation loop with multiple ways to win or lose. Understanding
-            these rules is essential for building effective strategies.
-        </p>
-
-        <h3>Round Lifecycle</h3>
-        <div class="rule-flow">
-            <div class="rule-step">
-                <span class="step-num">1</span>
-                <div class="step-title">Loadout Validation</div>
-                <div class="step-desc">The game checks that required accessories are equipped and the power budget is not exceeded before allowing the round to start.</div>
-            </div>
-            <div class="rule-step">
-                <span class="step-num">2</span>
-                <div class="step-title">World Bake</div>
-                <div class="step-desc">Scene geometry — ground, walls, obstacles — is converted into a simplified collision world for deterministic simulation. Both robots are placed at their start positions with full health.</div>
-            </div>
-            <div class="rule-step">
-                <span class="step-num">3</span>
-                <div class="step-title">Active Round</div>
-                <div class="step-desc">The tick clock starts. Player and enemy programs execute concurrently. Projectiles fly, sensors poll, events fire, health bars drain. The round continues until a terminal condition is met.</div>
-            </div>
-            <div class="rule-step">
-                <span class="step-num">4</span>
-                <div class="step-title">Resolution</div>
-                <div class="step-desc">When the round ends, a winner is determined by the rules below. A 2-second death/draw presentation plays, then the result popup is shown.</div>
-            </div>
-        </div>
-
-        <h3>How to Win (or Lose)</h3>
-
-        <div class="win-card">
-            <div class="verdict verdict-win">WIN — Deplete the Enemy</div>
-            <p>
-                Each robot has a health pool. Bullet hits deal damage. When the enemy's health reaches zero,
-                you win immediately. Accessories can modify both max health and damage per hit,
-                so loadout choices directly affect time-to-kill.
-            </p>
-        </div>
-
-        <div class="win-card">
-            <div class="verdict verdict-win">WIN — Knock the Enemy Off the Map</div>
-            <p>
-                The arena is a raised platform. If a robot falls below a threshold distance from the
-                platform surface, it is instantly eliminated regardless of remaining health. Knockback
-                from projectiles, ricochets, and special abilities can push robots over the edge.
-            </p>
-        </div>
-
-        <div class="win-card">
-            <div class="verdict verdict-win">WIN — Capture Zone Control</div>
-            <p>
-                Some arena layouts include a capture point near the center. If a robot controls
-                the zone when time expires, it wins — even if both robots are still alive.
-                The capture zone can change hands during the round depending on robot presence.
-            </p>
-        </div>
-
-        <div class="win-card">
-            <div class="verdict verdict-lose">LOSE — Your Robot is Depleted</div>
-            <p>
-                The mirror of the above: if your health hits zero (from bullets or falling),
-                the enemy wins. Damage from your own ricocheting bullets can hurt you too.
-            </p>
-        </div>
-
-        <div class="win-card">
-            <div class="verdict verdict-draw">DRAW — Mutual Destruction</div>
-            <p>
-                If both robots are depleted in the same tick (e.g., simultaneous knockback off the map,
-                or a final exchange of fire), the round ends in a draw. No winner is declared.
-            </p>
-        </div>
-
-        <h3>What Happens When Time Runs Out?</h3>
-        <p style="color: var(--text-dim);">
-            Each round has a configurable time limit (default 30 seconds, adjustable via the timer button).
-            When the clock expires without a knockout:
-        </p>
-        <ul style="margin-left:20px; color: var(--text-dim); font-size:0.9rem; margin-bottom:16px;">
-            <li>If one robot controls the capture zone, they win outright.</li>
-            <li>Otherwise, the robot that took <strong>less total damage</strong> during the round wins — this is a "judge's decision" based on combat effectiveness.</li>
-            <li>If damage taken is equal, the round is a draw.</li>
-        </ul>
-
-        <h3>Program Completion</h3>
-        <p style="color: var(--text-dim);">
-            Both player and enemy programs run simultaneously. If <strong>both</strong> programs finish executing
-            their main chain (i.e., reach the end of their block sequence without being in a loop)
-            before the timer expires and before either robot is destroyed, the round stops
-            and the winner is resolved by the same damage-comparison rule used for timeouts.
-        </p>
-
-        <h3>Damage Mechanics</h3>
-        <p style="color: var(--text-dim);">
-            Bullets deal a fixed base damage per hit. Each robot's damage output can be modified by
-            weapon accessories (via a damage multiplier stat). Bullets ricochet off walls — a single
-            shot can potentially hit multiple times. Each ricochet reduces remaining bullet lifetime,
-            so infinite bounces are not possible. Damage is disabled before the round starts and
-            after it ends, so there's no pre-match or post-match griefing.
-        </p>
-    </div>
-</section>
-
-<!-- ══════════════════════════════════════════ -->
-<!--  INTERFACE GUIDE                          -->
-<!-- ══════════════════════════════════════════ -->
-<section>
-    <div class="container">
-        <h2>Interface Guide</h2>
-        <p class="section-desc">The UI is split into a programming panel (left) and a 3D arena view (right). Hereʼs what every control does.</p>
-
-        <h3>Workspace Toolbar</h3>
-        <table>
-            <thead><tr><th>Button</th><th>Function</th></tr></thead>
-            <tbody>
-                <tr><td>&gt; Run</td><td>Starts the match. Resets health, bakes the deterministic world, enables damage, and runs both your program and the enemy program simultaneously.</td></tr>
-                <tr><td>Stop</td><td>Immediately halts the running match and resets both robots to their start positions.</td></tr>
-                <tr><td>Reset</td><td>Resets robot positions and health without running. Clears the running state.</td></tr>
-                <tr><td>Clear</td><td>Removes all blocks from the workspace. You can re-import or rebuild afterward.</td></tr>
-                <tr><td>&lt;&lt; 3</td><td>Rolls back the last 3 actions in the workspace (undo).</td></tr>
-                <tr><td>+</td><td>Expands the workspace to fill the entire window, hiding the 3D arena. Press again to restore.</td></tr>
-                <tr><td>−</td><td>Collapses the workspace column to give more room to the block palette.</td></tr>
-            </tbody>
-        </table>
-
-        <h3>Tab Bar</h3>
-        <table>
-            <thead><tr><th>Tab</th><th>Function</th></tr></thead>
-            <tbody>
-                <tr><td>PROGRAMMING</td><td>The main view: category list → palette → workspace → 3D arena. This is where you build the robot program.</td></tr>
-                <tr><td>ACCESSORIES</td><td>Switches to the loadout editor: select mobility, weapon, armor, sensor, and special modules. Shows a 3D preview of equipped parts and lists unlocked blocks.</td></tr>
-            </tbody>
-        </table>
-
-        <h3>Global Controls</h3>
-        <table>
-            <thead><tr><th>Button</th><th>Function</th></tr></thead>
-            <tbody>
-                <tr><td>IM/EXPORT</td><td>Opens a popup with three actions: <strong>export</strong> your program as JSON, <strong>import for my robot</strong> a JSON strategy, or <strong>import for enemy</strong> a JSON strategy.</td></tr>
-                <tr><td>30s</td><td>Sets the round duration. Click to open a dialog where you can change the time limit.</td></tr>
-                <tr><td>P: 0/50</td><td>Power budget display. Shows current power consumption vs. the player limit. If you exceed the limit, the Run button is blocked.</td></tr>
-                <tr><td>?</td><td>Quick Template — loads a pre-built example program into the workspace (clears existing blocks). Useful as a starting point.</td></tr>
-                <tr><td>1x</td><td>Simulation speed toggle. Cycles through speed multipliers during a running match.</td></tr>
-            </tbody>
-        </table>
-    </div>
-</section>
-
-<!-- ══════════════════════════════════════════ -->
-<!--  ACCESSORY SYSTEM (EXPANDED)              -->
-<!-- ══════════════════════════════════════════ -->
-<section>
-    <div class="container">
-        <h2>Accessory System</h2>
-        <p class="section-desc">
-            Accessories are the customization backbone of your robot. Each one occupies a specific
-            equipment slot, consumes a portion of your power budget, and can dramatically alter
-            your robot's combat performance. The ACCESSORIES tab provides a visual preview
-            of equipped parts and shows which blocks each accessory unlocks.
-        </p>
-
-        <h3>Equipment Slots &amp; Categories</h3>
-
-        <div class="acc-row">
-            <span class="acc-icon">🛞</span>
-            <div class="acc-body">
-                <h4>Mobility — Wheels &amp; Tracks</h4>
-                <p>
-                    Determines how fast your robot moves and turns. Different mobility options apply
-                    duration multipliers to movement and rotation actions. Faster mobility means you can
-                    cover more ground per action block, but high-performance parts cost more power.
-                    Mobility is a single-select slot — you can only equip one at a time.
-                </p>
-            </div>
-        </div>
-
-        <div class="acc-row">
-            <span class="acc-icon">🔫</span>
-            <div class="acc-body">
-                <h4>Weapon — Cannons &amp; Lasers</h4>
-                <p>
-                    Controls your offensive output. Weapons can modify muzzle velocity (how fast projectiles travel),
-                    fire rate (time between shots), and damage multiplier (how hard each hit lands).
-                    Some weapons also define a maximum effective range with damage falloff — shots
-                    beyond optimal distance deal reduced damage. Equipping a weapon also unlocks
-                    the Fire block in the programming palette.
-                </p>
-            </div>
-        </div>
-
-        <div class="acc-row">
-            <span class="acc-icon">🛡️</span>
-            <div class="acc-body">
-                <h4>Defense — Armor, Shields, Jetpacks</h4>
-                <p>
-                    Armor adds a flat bonus to your robot's maximum health pool and may provide
-                    secondary benefits like increased sensor range. Shields and jetpacks occupy this
-                    same single-select slot and provide different defensive or mobility trade-offs.
-                    The defense slot is crucial for survivability — a robot with no armor is fragile.
-                </p>
-            </div>
-        </div>
-
-        <div class="acc-row">
-            <span class="acc-icon">📡</span>
-            <div class="acc-body">
-                <h4>Sensor — Radar</h4>
-                <p>
-                    Extends the range at which your robot can detect enemies and obstacles.
-                    A longer sensor range means your robot can "see" threats from farther away,
-                    which is critical for environment-aware strategies that use visibility checks.
-                    Sensor range multiplies the base detection distance of all sensing blocks.
-                </p>
-            </div>
-        </div>
-
-        <div class="acc-row">
-            <span class="acc-icon">⚡</span>
-            <div class="acc-body">
-                <h4>Special — Bouncer &amp; Freezer</h4>
-                <p>
-                    Active abilities that can turn the tide of battle. These occupy the Special slot
-                    and each has its own cooldown timer.
-                </p>
-            </div>
-        </div>
-
-        <h3>Special Abilities in Detail</h3>
-
-        <div class="grid" style="margin-top:12px;">
-            <div class="card">
-                <span class="icon">💥</span>
-                <h4>Bouncer</h4>
-                <p>
-                    A radial knockback burst centered on your robot. When activated, it applies a
-                    physics impulse to targets within a configurable radius. Extremely effective for
-                    pushing enemies off the map edge or breaking line-of-sight. Has a cooldown between
-                    uses, and some Bouncer variants can only fire once per round.
-                </p>
-            </div>
-            <div class="card">
-                <span class="icon">❄️</span>
-                <h4>Freezer</h4>
-                <p>
-                    Temporarily multiplies the target enemy's movement and firing speed by a fraction,
-                    effectively slowing them down for a configurable duration. Must be activated within
-                    range of the enemy robot. The freeze effect wears off after its duration expires,
-                    but can be re-applied once the cooldown resets. Does not deal direct damage.
-                </p>
-            </div>
-        </div>
-
-        <div class="tip" style="border-left-color: var(--yellow); background: #2a2410;">
-            <strong style="color: var(--yellow);">💡 Weapon Range &amp; Linear Falloff:</strong>
-            Every weapon accessory can define a <strong>max range</strong> and a <strong>linear damage falloff</strong> curve.
-            Within the <strong>falloff start distance</strong>, bullets deal 100% of their base damage. Beyond that point,
-            damage decreases <strong>linearly</strong> with distance traveled — the farther the shot, the less it hurts.
-            At <strong>max range</strong>, damage bottoms out at a configurable <strong>minimum multiplier</strong> (e.g. 20%).
-            A weapon with <code>maxRange = 0</code> has <strong>no range limit</strong> — its bullets never expire from distance
-            and deal full damage at any range. This system rewards closing the gap and punishes long-range sniping
-            unless the weapon is built for it. Check your weapon's stats in the ACCESSORIES tab to understand
-            its effective engagement envelope.
-        </div>
-
-        <h3>Power Budget</h3>
-        <p style="color: var(--text-dim);">
-            Every accessory has a power consumption value. Both you and the enemy have a power
-            ceiling — if your equipped loadout exceeds it, you cannot start the round.
-            This forces meaningful trade-offs: you can't equip the best of everything.
-            The current power usage is displayed next to the global controls and updates
-            in real time as you change equipment.
-        </p>
-
-        <h3>Stat Bonuses</h3>
-        <p style="color: var(--text-dim);">
-            Accessories modify your robot's performance through cumulative stat bonuses.
-            Multiple equipped parts can stack their effects. The key stats affected are:
-            movement speed, rotation speed, maximum health, damage dealt per hit,
-            projectile muzzle velocity, fire rate, and sensor detection range.
-            Some accessories also unlock blocks that would otherwise be hidden in the palette —
-            you literally cannot use certain abilities without the right equipment.
-        </p>
-    </div>
-</section>
-
-<!-- ══════════════════════════════════════════ -->
-<!--  STRATEGY & COMPETITION                   -->
-<!-- ══════════════════════════════════════════ -->
-<section>
-    <div class="container">
-        <h2>Strategy &amp; Competition</h2>
-        <p class="section-desc">
-            Programs are stored and shared as JSON files. You can export your design, import
-            opponent strategies, or hand-author programs. A strategy competition guide is
-            included in the project repository.
-        </p>
-
-        <h3>Arena Layout</h3>
-        <div class="arena-illustration">
-            <div class="arena-box">
-                <div class="arena-player" title="Player start"></div>
-                <span class="arena-label" style="position:absolute;top:6px;left:40px;">My Robot</span>
-                <div class="arena-enemy" title="Enemy start"></div>
-                <span class="arena-label" style="position:absolute;bottom:6px;right:42px;">Enemy</span>
-                <div class="arena-wall" title="Center obstacles"></div>
-                <span class="arena-label" style="position:absolute;top:50%;left:58%;">Walls</span>
-            </div>
-        </div>
-        <p style="text-align:center; font-size:0.9rem; color:var(--text-dim);">
-            A square platform with obstacles near the center that block movement and line-of-sight.<br>
-            Robots start in opposite corners with significant distance between them.
-        </p>
-
-        <div class="tip">
-            <strong>Key design insight:</strong> The center obstacles mean direct pursuit often fails.
-            Successful strategies need to navigate around walls, check whether firing lanes are clear,
-            and use the environment to their advantage. Pure rush-down approaches are rarely optimal.
-        </div>
-    </div>
-</section>
-
-<!-- ══════════════════════════════════════════ -->
-<footer>
-    <div class="container">
+  <main>
+    <section class="hero" id="overview">
+      <div class="hero-copy">
+        <span class="eyebrow">Player Onboarding</span>
+        <h1>From making it run to knowing why it wins.</h1>
         <p>
-            Robot Arena &mdash; built with Unity · Deterministic Physics · Scratch-like Visual Programming
-            &nbsp;·&nbsp;
-            <a href="https://github.com/NULL2020mc/NULL2020mc.github.io" target="_blank">GitHub</a>
+          This guidance is for players who are new to Robot Arena. It is not a full block catalog.
+          Instead, it focuses on rules that are easy to miss in the UI: yaw angles, event priority,
+          sensing monitors, rollback, accessory unlocks, capture zone logic, and match resolution.
         </p>
-    </div>
-</footer>
+        <div class="hero-actions">
+          <a class="button primary" href="#blocks">Start with block rules</a>
+        </div>
+      </div>
+      <div class="hero-visual" aria-label="Arena overview screenshot">
+        <img class="hero-image" src="./overview-capture-zone.png" alt="Robot Arena match showing the center capture zone, robots, weapon ranges, and arena obstacles.">
+      </div>
+    </section>
 
+    <section class="section warm">
+      <div class="section-inner intro-grid">
+        <article class="info-card">
+          <span class="badge">UI Tip</span>
+          <h2>Learn to read tooltips first</h2>
+          <p>
+            Hover over accessory cards or blocks to see descriptions, return values, default parameters,
+            and equipment requirements. Many answers to “why can’t I use this block?” or “does this sensing
+            block return true/false or a number?” are hidden in hover tooltips.
+          </p>
+        </article>
+        <article class="info-card">
+          <span class="badge">Before Running</span>
+          <h2>Check equipment and Power</h2>
+          <p>
+            Some action blocks require matching accessories before they unlock. If your Power exceeds the limit,
+            the program will not start. The monitor in the top-left of the Accessories page shows Move Cd,
+            Rotate Cd, Fire Cd, Max HP, HP, and Damage.
+          </p>
+        </article>
+        <article class="info-card">
+          <span class="badge">Debugging</span>
+          <h2>Use monitors and rollback</h2>
+          <p>
+            Turn on monitors for key sensing blocks, then use <span class="ui-chip">&lt;&lt; 3</span>
+            to return to the moment before a mistake and edit the logic. It is much faster than restarting blindly.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="blocks">
+      <div class="section-heading">
+        <span class="section-label">01 / Blocks</span>
+        <h2>Block Programming</h2>
+        <p>Once you understand these rules, your strategy becomes a debuggable robot program instead of a pile of blocks.</p>
+      </div>
+
+      <div class="content-grid">
+        <aside class="toc">
+          <a href="#yaw">Absolute yaw angles</a>
+          <a href="#sensing">Sensing monitor</a>
+          <a href="#enemy-view">Enemy In View</a>
+          <a href="#priority">Priority blocks</a>
+          <a href="#voids">Custom void</a>
+          <a href="#rollback">Rollback</a>
+          <a href="#import-export">Export / Import</a>
+        </aside>
+
+        <div class="guide-stack">
+          <article class="guide-block" id="yaw">
+            <h3>Yaw is an absolute world angle, not just “turn left or right”</h3>
+            <p>
+              Some reporters and actions use absolute world yaw: 0-360 degrees in the arena coordinate system.
+              Be careful to distinguish <span class="block stack action small">Rotate <span class="input">90</span></span>
+              from <span class="block stack action wide">Point Towards <span class="input">90</span></span>.
+            </p>
+            <div class="example-row">
+              <div class="mini-program">
+                <span class="block stack start">Robot Start</span>
+                <span class="block stack action">Rotate <span class="input">90</span></span>
+                <span class="block stack action wide">Point Towards <span class="input">90</span></span>
+              </div>
+              <p>
+                <b>Rotate</b> takes a relative rotation angle: how many degrees to turn from the current heading.
+                <b>Point Towards</b> takes an absolute world yaw: the exact direction to face. In other words,
+                running Rotate 90 twice accumulates two turns; running Point Towards 90 twice usually changes
+                nothing the second time.
+              </p>
+            </div>
+            <p>
+              Combining <span class="block reporter sensing">Direction To <span class="dropdown">nearest enemy</span></span>
+              with Point Towards lets the robot dynamically face an enemy, a wall, or the map center, because
+              Direction To also returns an absolute yaw.
+            </p>
+          </article>
+
+          <article class="guide-block" id="sensing">
+            <h3>Sensing blocks can show monitors</h3>
+            <p>
+              Some sensing blocks return true/false, while others return numbers. You can enable their monitor
+              in the palette to display live values during the match. If a sensing block has dropdown options,
+              and the workspace contains the same sensing block with different options, enabling the monitor
+              will show multiple monitors, one for each option.
+            </p>
+            <div class="example-row">
+              <div class="monitor-demo">
+                <div class="monitor-row"><span>Distance To enemy</span><b>12.4</b></div>
+                <div class="monitor-row"><span>Distance To wall</span><b>3.1</b></div>
+                <div class="monitor-row"><span>Direction To center</span><b>274</b></div>
+              </div>
+              <div class="mini-program loose">
+                <span class="block reporter sensing">Distance To <span class="dropdown">enemy</span></span>
+                <span class="block reporter sensing">Distance To <span class="dropdown">wall</span></span>
+                <span class="block reporter sensing">Direction To <span class="dropdown">map center</span></span>
+              </div>
+            </div>
+            <figure class="screenshot-frame">
+              <img src="./sensingBlocksMonitor.png" alt="Programming page showing sensing monitor toggles and live sensing monitors.">
+              <figcaption>SENSING palette monitor toggles with live sensing monitors visible during debugging.</figcaption>
+            </figure>
+          </article>
+
+          <article class="guide-block" id="enemy-view">
+            <h3>The three conditions behind Enemy In View?</h3>
+            <p>
+              <span class="block condition">Enemy In View?</span> does not simply mean “the enemy is on screen.”
+              It is true only when all of these conditions are met:
+            </p>
+            <ul class="rule-list">
+              <li>The enemy is within 100m.</li>
+              <li>The enemy is within ±45 degrees of the robot’s forward direction, forming a 90-degree cone.</li>
+              <li>If the robot fired now, the bullet path to the enemy would not be blocked by a wall or obstacle.</li>
+            </ul>
+            <p>
+              Therefore, it returns false if the enemy is close but behind you, or if the center wall blocks
+              the direct firing line. A common pattern is to check <span class="block condition">Enemy In View?</span>
+              before running <span class="block stack action">Aim At Enemy</span>
+              and <span class="block stack action small">Fire</span>.
+            </p>
+          </article>
+
+          <article class="guide-block" id="priority">
+            <h3>Priority blocks are an interrupt system</h3>
+            <p>
+              <span class="block event">When <span class="socket">condition</span> P=<b>2</b></span>
+              runs the chain below it when its condition triggers. It is not a normal if block; it is an event.
+              It can interrupt the main chain, and it can also interrupt lower-priority event chains.
+              Higher P values mean higher priority.
+            </p>
+            <div class="logic-ladder">
+              <div class="lane normal">
+                <span class="lane-title">Robot Start main chain</span>
+                <span class="block stack start">Robot Start</span>
+                <span class="block stack action">Move <span class="input">2</span></span>
+                <span class="block stack action">Wait <span class="input">1</span></span>
+              </div>
+              <div class="lane interrupt">
+                <span class="lane-title">Higher-priority event</span>
+                <span class="block event">When <span class="socket">bullet</span> P=<b>3</b></span>
+                <span class="block stack action">Rotate <span class="input">-45</span></span>
+                <span class="block stack action">Move <span class="input">1</span></span>
+              </div>
+            </div>
+            <p>
+              After the high-priority event chain finishes, execution returns directly to <b>Robot Start</b>.
+              It does not resume at the block after the interrupted block. This makes events great for emergency
+              reactions such as dodging bullets, escaping the map edge, or pushing back when touching the enemy.
+              Do not put every normal behavior into events, or the main chain will be reset constantly.
+            </p>
+          </article>
+
+          <article class="guide-block" id="voids">
+            <h3>Custom void: save the current main chain as a reusable action</h3>
+            <p>
+              When you save a void in MY VOIDS, the game saves the logic currently connected from
+              <span class="block stack start tiny">Robot Start</span> in the workspace, including blocks nested
+              inside loops and conditions. After saving, a
+              <span class="block stack void">Call Void <span class="dropdown">name</span></span>
+              block appears and can be reused in the main program or other branches.
+            </p>
+            <p>
+              Treat voids as tactical action snippets: briefly routing around a wall, aligning before capture,
+              or executing an attack sequence after the enemy enters view. Avoid recursive self-calls; recursive
+              calls are skipped at runtime to prevent infinite nesting.
+            </p>
+            <figure class="screenshot-frame">
+              <img src="./void.png" alt="MY VOIDS page showing Robot Start logic, a void name field, and Save void button.">
+              <figcaption>MY VOIDS saves the connected chain from Robot Start as a reusable void.</figcaption>
+            </figure>
+          </article>
+
+          <article class="guide-block" id="rollback">
+            <h3>Rollback: use &lt;&lt; 3 to edit just before the mistake</h3>
+            <p>
+              Press <span class="ui-chip">&lt;&lt; 3</span> while the program is running, and the game will try
+              to return to the match moment from three blocks earlier. After rollback finishes, you can edit
+              the block program. The rollback point turns pink, marking it as the resume anchor.
+            </p>
+            <div class="example-row">
+              <div class="mini-program">
+                <span class="block stack start">Robot Start</span>
+                <span class="block stack action">Move <span class="input">2</span></span>
+                <span class="block stack rollback">Point Towards <span class="input">180</span></span>
+                <span class="block stack action">Fire</span>
+              </div>
+              <p>
+                The pink rollback point cannot be deleted. When you click Run again, the program does not restart
+                from the initial Robot Start state. It resumes from the match moment represented by the pink anchor,
+                preserving robot positions, enemy position, and remaining time from that rollback point.
+              </p>
+            </div>
+            <p>
+              If the target rollback point is near a fall or another unsafe state, the game will look for a safer
+              runnable rollback point. If it cannot find one, it will report that rollback is unavailable.
+            </p>
+          </article>
+
+          <article class="guide-block" id="import-export">
+            <h3>Export / Import: share and test strategies</h3>
+            <p>
+              Stop the program, then click <span class="ui-chip">IM/EXPORT</span> in the top-right corner.
+              <b>export</b> saves the current block design as JSON. <b>import for my robot</b> imports a JSON
+              strategy for your robot. <b>import for enemy</b> imports it for the enemy, which is useful for
+              matchup testing.
+            </p>
+            <p>
+              Use clear file names for exported JSON, such as <span class="code-chip">zone-control-v2.json</span>.
+              Make sure the current program is stopped before importing so you do not modify state mid-run.
+            </p>
+            <figure class="screenshot-frame compact-shot">
+              <img src="./im%3Aexport.png" alt="IM/EXPORT popup with export, import for my robot, and import for enemy buttons.">
+              <figcaption>Use IM/EXPORT to save your strategy JSON or load it for either robot.</figcaption>
+            </figure>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section warm" id="accessories">
+      <div class="section-inner">
+        <div class="section-heading">
+          <span class="section-label">02 / Accessories</span>
+          <h2>Accessory System</h2>
+          <p>Accessories affect speed, health, weapons, special abilities, and whether some action blocks are usable.</p>
+        </div>
+
+        <div class="accessory-grid">
+          <article class="info-card">
+            <span class="badge blue">WHEELS</span>
+            <h3>Movement and turning</h3>
+            <p>
+              Wheels accessories control Move Cd and Rotate Cd. Lower values mean faster movement and turning.
+              Equipping any wheels accessory enables <span class="block stack action small">Move</span>,
+              <span class="block stack action small">Rotate</span>, and
+              <span class="block stack action wide">Point Towards</span>.
+            </p>
+          </article>
+          <article class="info-card">
+            <span class="badge blue">WEAPONS</span>
+            <h3>Damage, bullet speed, range, and fire cooldown</h3>
+            <p>
+              Weapon accessories unlock <span class="block stack action small">Fire</span>,
+              <span class="block stack action">Aim At Enemy</span>, and
+              <span class="block stack action wide">Aim At <span class="input">angle</span></span>.
+              Turning on <b>Fire Assistance</b> enables the weapon range display and laser aim line, which are
+              useful for debugging range and bullet paths.
+            </p>
+          </article>
+          <article class="info-card">
+            <span class="badge green">ARMOR</span>
+            <h3>Health</h3>
+            <p>
+              Armor increases Max HP and does not directly unlock new blocks. Heavier armor improves forgiveness,
+              but it consumes Power, so it must be balanced against weapons and mobility.
+            </p>
+          </article>
+          <article class="info-card">
+            <span class="badge teal">SENSOR</span>
+            <h3>Sensing and reporters</h3>
+            <p>
+              Radar accessory tooltips mark it as unlocking sensing and reporter-style blocks, such as distance,
+              direction, health, contact, bullet range, and capture-zone state readings. In the current version,
+              these sensing blocks can still be placed in the workspace, but players should treat radar as the
+              main entry point for reading the environment and use monitors to debug live values.
+            </p>
+          </article>
+          <article class="info-card special">
+            <span class="badge green">SPECIAL</span>
+            <h3>Bouncer</h3>
+            <p>
+              Bouncer unlocks <span class="block stack bouncer">Activate Bouncer</span>.
+              When activated, it applies radial knockback to nearby enemies. The effect weakens with distance,
+              has a cooldown, and is skipped while on cooldown. It is useful for pushing enemies out of the
+              capture zone, toward the map edge, or out of close-range pressure.
+            </p>
+          </article>
+          <article class="info-card special">
+            <span class="badge cyan">SPECIAL</span>
+            <h3>Freezer</h3>
+            <p>
+              Freezer unlocks <span class="block stack freezer">Activate Freezer</span>.
+              When activated, it applies a temporary slow effect to enemies within range and also has a cooldown.
+              It pairs well with chasing, capture-zone defense, and avoiding enemy rams.
+            </p>
+          </article>
+        </div>
+
+        <figure class="screenshot-frame wide-shot">
+          <img src="./fireAssist.png" alt="Accessories weapons page with Fire Assistance enabled, weapon range circle, and laser aim line.">
+          <figcaption>Fire Assistance shows the weapon range circle and laser aim line for tuning attacks.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section" id="capture">
+      <div class="section-heading">
+        <span class="section-label">03 / Capture Zone</span>
+        <h2>Capture Zone</h2>
+        <p>The center zone is a one-time objective: once captured, the other side cannot take it back.</p>
+      </div>
+      <div class="capture-layout">
+        <div class="capture-steps">
+          <div class="step">
+            <span>1</span>
+            <p>One robot enters the center capture area while the opponent is outside the capture area.</p>
+          </div>
+          <div class="step">
+            <span>2</span>
+            <p>If it stays alone for more than 5 seconds, the capture succeeds.</p>
+          </div>
+          <div class="step">
+            <span>3</span>
+            <p>If the opponent enters the capture area during that time, the capture attempt fails and progress resets.</p>
+          </div>
+          <div class="step">
+            <span>4</span>
+            <p>Once either side completes the capture during the match, ownership is locked and cannot be stolen.</p>
+          </div>
+        </div>
+        <div class="screenshot-pair">
+          <figure class="screenshot-frame">
+            <img src="./singleRobotOccupyZone.png" alt="One robot alone in the center capture zone with capture progress visible.">
+            <figcaption>Solo occupation builds capture progress.</figcaption>
+          </figure>
+          <figure class="screenshot-frame">
+            <img src="./zoneContested.png" alt="Both robots inside the capture zone causing a contested state.">
+            <figcaption>When both robots enter the zone, the capture attempt is contested and progress resets.</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="section warm" id="win">
+      <div class="section-inner">
+        <div class="section-heading">
+          <span class="section-label">04 / Winning Condition</span>
+          <h2>Winning Condition</h2>
+          <p>Resolution order matters: death first, capture second, then damage comparison.</p>
+        </div>
+
+        <div class="win-grid">
+          <article class="info-card">
+            <span class="badge red">1</span>
+            <h3>If one side dies, the opponent wins</h3>
+            <p>
+              A robot can die from bullet damage, or by being pushed off the map edge, or by driving off the edge itself.
+              If both robots die at the same time, the match is a draw.
+            </p>
+          </article>
+          <article class="info-card">
+            <span class="badge blue">2</span>
+            <h3>If both survive, check capture</h3>
+            <p>
+              If either side has successfully captured the zone and both robots are still alive, the capturing side wins.
+            </p>
+          </article>
+          <article class="info-card">
+            <span class="badge orange">3</span>
+            <h3>If nobody captured, compare damage</h3>
+            <p>
+              If neither robot died and nobody captured the zone, the side that dealt more damage wins.
+              Equivalently, the side that took less damage wins.
+            </p>
+          </article>
+          <article class="info-card">
+            <span class="badge">4</span>
+            <h3>If damage is equal, draw</h3>
+            <p>
+              If neither side lost health, or both sides lost the same amount of health, the match is a draw.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <p>Robot Arena Guidance. Built as a lightweight static page for player onboarding.</p>
+  </footer>
 </body>
 </html>
