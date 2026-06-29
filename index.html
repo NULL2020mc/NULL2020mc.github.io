@@ -473,6 +473,18 @@
             </div>
         </div>
 
+        <div class="tip" style="border-left-color: var(--yellow); background: #2a2410;">
+            <strong style="color: var(--yellow);">💡 Weapon Range &amp; Linear Falloff:</strong>
+            Every weapon accessory can define a <strong>max range</strong> and a <strong>linear damage falloff</strong> curve.
+            Within the <strong>falloff start distance</strong>, bullets deal 100% of their base damage. Beyond that point,
+            damage decreases <strong>linearly</strong> with distance traveled — the farther the shot, the less it hurts.
+            At <strong>max range</strong>, damage bottoms out at a configurable <strong>minimum multiplier</strong> (e.g. 20%).
+            A weapon with <code>maxRange = 0</code> has <strong>no range limit</strong> — its bullets never expire from distance
+            and deal full damage at any range. This system rewards closing the gap and punishes long-range sniping
+            unless the weapon is built for it. Check your weapon's stats in the ACCESSORIES tab to understand
+            its effective engagement envelope.
+        </div>
+
         <h3>Power Budget</h3>
         <p style="color: var(--text-dim);">
             Every accessory has a power consumption value. Both you and the enemy have a power
