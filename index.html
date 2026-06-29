@@ -77,7 +77,7 @@
 
       <div class="content-grid">
         <aside class="toc">
-          <a href="#yaw">Absolute yaw angles</a>
+          <a href="#yaw">Start-axis yaw angles</a>
           <a href="#sensing">Sensing monitor</a>
           <a href="#enemy-view">Enemy In View</a>
           <a href="#priority">Priority blocks</a>
@@ -88,9 +88,10 @@
 
         <div class="guide-stack">
           <article class="guide-block" id="yaw">
-            <h3>Yaw is an absolute world angle, not just “turn left or right”</h3>
+            <h3>Yaw is measured from each robot’s starting axis</h3>
             <p>
-              Some reporters and actions use absolute world yaw: 0-360 degrees in the arena coordinate system.
+              Some reporters and actions use start-axis yaw: 0-360 degrees measured from the line between
+              the robot’s own starting position and the enemy starting position.
               Be careful to distinguish <span class="block stack action small">Rotate <span class="input">90</span></span>
               from <span class="block stack action wide">Point Towards <span class="input">90</span></span>.
             </p>
@@ -102,15 +103,22 @@
               </div>
               <p>
                 <b>Rotate</b> takes a relative rotation angle: how many degrees to turn from the current heading.
-                <b>Point Towards</b> takes an absolute world yaw: the exact direction to face. In other words,
+                <b>Point Towards</b> takes a start-axis yaw: the exact arena-relative direction to face. In other words,
                 running Rotate 90 twice accumulates two turns; running Point Towards 90 twice usually changes
                 nothing the second time.
               </p>
             </div>
             <p>
+              A yaw of 0 points toward the enemy starting position. The same yaw is applied from each robot’s
+              own starting axis, so if both robots run <span class="block stack action wide">Point Towards <span class="input">9</span></span>,
+              they face opposite world directions rather than the same global direction.
+            </p>
+            <p>
               Combining <span class="block reporter sensing">Direction To <span class="dropdown">nearest enemy</span></span>
               with Point Towards lets the robot dynamically face an enemy, a wall, or the map center, because
-              Direction To also returns an absolute yaw.
+              Direction To also returns a start-axis yaw. The weapon block
+              <span class="block stack action wide">Aim At <span class="input">angle</span></span>
+              uses the same angle semantics for the cannon.
             </p>
           </article>
 
@@ -282,6 +290,7 @@
               Weapon accessories unlock <span class="block stack action small">Fire</span>,
               <span class="block stack action">Aim At Enemy</span>, and
               <span class="block stack action wide">Aim At <span class="input">angle</span></span>.
+              Aim At angle uses the same start-axis yaw rule as Point Towards.
               Turning on <b>Fire Assistance</b> enables the weapon range display and laser aim line, which are
               useful for debugging range and bullet paths.
             </p>
